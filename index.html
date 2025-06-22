@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MBTI 오늘의 조언</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    #result {
+      margin-top: 30px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>오늘의 MBTI 조언</h1>
+  <form id="advice-form">
+    <label for="name">이름</label>
+    <input type="text" id="name" name="name" required />
+
+    <label for="mbti">MBTI</label>
+    <select id="mbti" name="mbti" required>
+      <option value="">선택하세요</option>
+      <option value="INTJ">INTJ</option>
+      <option value="INTP">INTP</option>
+      <option value="ENTJ">ENTJ</option>
+      <option value="ENTP">ENTP</option>
+      <option value="INFJ">INFJ</option>
+      <option value="INFP">INFP</option>
+      <option value="ENFJ">ENFJ</option>
+      <option value="ENFP">ENFP</option>
+      <option value="ISTJ">ISTJ</option>
+      <option value="ISFJ">ISFJ</option>
+      <option value="ESTJ">ESTJ</option>
+      <option value="ESFJ">ESFJ</option>
+      <option value="ISTP">ISTP</option>
+      <option value="ISFP">ISFP</option>
+      <option value="ESTP">ESTP</option>
+      <option value="ESFP">ESFP</option>
+    </select>
+
+    <button type="submit">조언 받아보기</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    document.getElementById("advice-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const mbti = document.getElementById("mbti").value;
+
+      const responseBox = document.getElementById("result");
+      responseBox.innerHTML = "조언을 받아오는 중...";
+
+      try {
+        const res = await fetch("http://localhost:3000/api/duksungAI", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ name, mbti })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          responseBox.innerHTML = `<strong>${name}</strong>님의 오늘 조언:<br><br>${data.answer}`;
+        } else {
+          responseBox.innerHTML = "오류: " + data.error;
+        }
+      } catch (err) {
+        responseBox.innerHTML = "요청 중 오류가 발생했습니다.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
+
+
